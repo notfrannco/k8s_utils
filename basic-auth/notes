@@ -1,0 +1,34 @@
+# Basic authentication using ingress nginx
+
+# To install ingress nginx
+helm upgrade --install ingress-nginx ingress-nginx --repo https://kubernetes.github.io/ingress-nginx --namespace ingress-nginx --create-namespace 
+
+
+# create a user and password 
+htpasswd -c auth user
+
+
+# create a secret from the auth file with the user and password
+kubectl create secret generic basic-auth --from-file=auth
+
+
+# to enable basic auth for host in k8s, edit the ingress and add 
+# the following
+---
+  annotations:
+    # type of authentication
+    nginx.ingress.kubernetes.io/auth-type: basic
+    # prevent the controller from redirecting (308) to HTTPS
+    nginx.ingress.kubernetes.io/ssl-redirect: 'false'
+    # name of the secret that contains the user/password definitions
+    nginx.ingress.kubernetes.io/auth-secret: basic-auth
+    # message to display with an appropriate context why the authentication is required
+    nginx.ingress.kubernetes.io/auth-realm: 'Authentication Required '
+    # custom max body size for file uploading like backing image uploading
+    nginx.ingress.kubernetes.io/proxy-body-size: 10000m
+---
+
+
+# example to create a ingress yaml template
+# OBS: validate the ingressclass name with "kubectl get ingressclass"
+kubectl create ingress kube-viewer --class=nginx --rule="kube-viewer/=kube-bench-viewer:80" --dry-run=client -o yaml
