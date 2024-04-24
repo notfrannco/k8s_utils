@@ -1,0 +1,8 @@
+# util for json report
+# original html: https://github.com/thomasfady/kube-bench-viewer/tree/main
+
+# configure 'namespace' to change the "default" namespace
+
+
+# to deploy run the command on the root folder 
+kubectl apply -f .
