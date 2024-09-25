@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: scapinoculars
+  name: scapinoculars
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: scapinoculars
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: scapinoculars
+    spec:
+      volumes:
+      - name: scap-pv-storage
+        persistentVolumeClaim:
+          claimName: scap-pv-claim
+      containers:
+      - image: quay.io/jfranco_3/scapreports
+        name: scapinoculars
+        resources: {}
+        ports:
+          - containerPort: 2112
+        volumeMounts:
+          - mountPath: "/opt/go/resources/reports"
+            name: scap-pv-storage
+        securityContext:
+          runAsUser: 0
+status: {}
